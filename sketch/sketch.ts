@@ -3,23 +3,38 @@ const sketch = (p: p5) => {
   const CANVAS_WIDTH : number = 800;
   const CANVAS_HEIGHT : number = 500;
 
-  let exampleImg : p5.Image;
+  let firstLayer : p5.Image;
+  let water : p5.Image;
+  let trees1 : p5.Image;
+  let trees2 : p5.Image;
+  let mountain : p5.Image;
+  let moon : p5.Image;
+  let umbrella : p5.Image;
 
   p.preload = () => {
-    exampleImg = p.loadImage("build/assets/example-image.png"); // server only
+    // preloading all assets
+    firstLayer = p.loadImage("build/assets/firstLayer.png");
+    water = p.loadImage("build/assets/water.png");
+    trees1 = p.loadImage("build/assets/trees1.png");
+    trees2 = p.loadImage("build/assets/trees2.png");
+    mountain = p.loadImage("build/assets/mountain.png");
+    moon = p.loadImage("build/assets/moon.png");
+    umbrella = p.loadImage("build/assets/umbrella.png");
   };
 
   p.setup = () => {
     p.createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-    
+    p.imageMode(p.CENTER);
   };
 
   p.draw = () => {
-    p.background(p.cos(p.frameCount / 50) * 100 + 100, 50, 0);
-    p.fill(250, 250, 120);
-    p.square(150, 150, SQUARE_SIZE);
-
-    p.image(exampleImg, 200, 200, 350, 200);
+    p.background(100);
+    p.translate(CANVAS_WIDTH/2, CANVAS_HEIGHT/2);
+    
+    // laster layer
+    p.image(mountain, 0, -CANVAS_HEIGHT/4, CANVAS_WIDTH, CANVAS_HEIGHT/2);
+    p.image(moon, 150, -CANVAS_HEIGHT/2.5, 70, 70);
+    
   };
 };
 

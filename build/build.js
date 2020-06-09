@@ -1,18 +1,31 @@
 const sketch = (p) => {
     const CANVAS_WIDTH = 800;
     const CANVAS_HEIGHT = 500;
-    let exampleImg;
+    let firstLayer;
+    let water;
+    let trees1;
+    let trees2;
+    let mountain;
+    let moon;
+    let umbrella;
     p.preload = () => {
-        exampleImg = p.loadImage("build/assets/example-image.png");
+        firstLayer = p.loadImage("build/assets/firstLayer.png");
+        water = p.loadImage("build/assets/water.png");
+        trees1 = p.loadImage("build/assets/trees1.png");
+        trees2 = p.loadImage("build/assets/trees2.png");
+        mountain = p.loadImage("build/assets/mountain.png");
+        moon = p.loadImage("build/assets/moon.png");
+        umbrella = p.loadImage("build/assets/umbrella.png");
     };
     p.setup = () => {
         p.createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+        p.imageMode(p.CENTER);
     };
     p.draw = () => {
-        p.background(p.cos(p.frameCount / 50) * 100 + 100, 50, 0);
-        p.fill(250, 250, 120);
-        p.square(150, 150, SQUARE_SIZE);
-        p.image(exampleImg, 200, 200, 350, 200);
+        p.background(100);
+        p.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+        p.image(mountain, 0, -CANVAS_HEIGHT / 4, CANVAS_WIDTH, CANVAS_HEIGHT / 2);
+        p.image(moon, 150, -CANVAS_HEIGHT / 2.5, 70, 70);
     };
 };
 window.onload = () => {
