@@ -1,5 +1,5 @@
 const sketch = (p) => {
-    const CANVAS_WIDTH = 800;
+    const CANVAS_WIDTH = 600;
     const CANVAS_HEIGHT = 500;
     let firstLayer;
     let water;

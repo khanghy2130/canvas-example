@@ -1,6 +1,6 @@
 const sketch = (p: p5) => {
 
-  const CANVAS_WIDTH : number = 800;
+  const CANVAS_WIDTH : number = 600;
   const CANVAS_HEIGHT : number = 500;
 
   let firstLayer : p5.Image;
