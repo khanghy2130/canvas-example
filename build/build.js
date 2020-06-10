@@ -46,10 +46,26 @@ const sketch = (p) => {
         const hitUmbrella = p.mouseY < UMBRELLA_APPEAR_Y &&
             p.dist(rainDrop.x, rainDrop.y, p.mouseX - CANVAS_WIDTH / 2, p.mouseY - CANVAS_HEIGHT / 2) < UMBRELLA_SIZE / 2;
         if (hitUmbrella || rainDrop.y > rainDrop.groundLevel) {
+            for (let i = 0; i < 1; i++) {
+                createWaterParticle(rainDrop.x, rainDrop.y);
+            }
             return false;
         }
         else
             return true;
+    }
+    let waterParticlesList = [];
+    function createWaterParticle(x, y) {
+        waterParticlesList.push({
+            pos: [x, y],
+            alpha: 200
+        });
+    }
+    function renderWaterParticle(wp) {
+        p.fill(255, 255, 255, wp.alpha);
+        p.circle(wp.pos[0], wp.pos[1], (200 - wp.alpha) * 0.06);
+        wp.alpha -= 10;
+        return wp.alpha > 0;
     }
     function getX(amplifier) {
         const mouseXFromCenter = p.constrain(p.mouseX - CANVAS_WIDTH / 2, -CANVAS_WIDTH / 2, CANVAS_WIDTH / 2);
@@ -85,6 +101,7 @@ const sketch = (p) => {
                 });
             }
         }
+        waterParticlesList = waterParticlesList.filter(renderWaterParticle);
         p.stroke(250);
         rainDropsList = rainDropsList.filter(renderRainDrop);
         p.push();

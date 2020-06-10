@@ -75,10 +75,32 @@ const sketch = (p: p5) => {
     // hit umbrella or ground
     if (hitUmbrella || rainDrop.y > rainDrop.groundLevel){
       // spawn water particles
+      for (let i=0; i < 1; i++){
+        waterParticlesList.push({
+          pos: [rainDrop.x, rainDrop.y], 
+          alpha: 200
+        });
+      }
 
       return false;
     }
     else return true;
+  }
+
+  interface WaterParticle {
+    pos: [number, number],
+    alpha: number
+  }
+  let waterParticlesList: WaterParticle[] = [];
+
+  function renderWaterParticle(wp: WaterParticle): boolean{
+    // render
+    p.fill(255, 255, 255, wp.alpha);
+    p.circle(wp.pos[0], wp.pos[1], (200 - wp.alpha)*0.06);
+
+    // update alpha
+    wp.alpha -= 10
+    return wp.alpha > 0;
   }
 
   function getX(amplifier: number): number {
@@ -139,6 +161,9 @@ const sketch = (p: p5) => {
       }
     }
 
+    // water particles (also filter)
+    waterParticlesList = waterParticlesList.filter(renderWaterParticle);
+
     // render rain drops (also filter out the ones that exploded)
     p.stroke(250);
     rainDropsList = rainDropsList.filter(renderRainDrop);
@@ -154,7 +179,7 @@ const sketch = (p: p5) => {
       );
     }
 
-    // update alpha
+    // update umbrella alpha
     if (p.mouseY < UMBRELLA_APPEAR_Y) umbrellaAlpha += 15;
     else umbrellaAlpha -= 15;
     umbrellaAlpha = p.constrain(umbrellaAlpha, 0, 255);
