@@ -25,10 +25,9 @@ const sketch = (p) => {
         p.strokeWeight(1);
         p.textFont("Cursive", 85);
     };
-    function getX(amplifier) {
-        const mouseXFromCenter = p.constrain(p.mouseX - CANVAS_WIDTH / 2, -CANVAS_WIDTH / 2, CANVAS_WIDTH / 2);
-        return mouseXFromCenter * amplifier;
-    }
+    const UMBRELLA_APPEAR_Y = CANVAS_HEIGHT / 2 + 100;
+    const UMBRELLA_SIZE = 120;
+    let umbrellaAlpha = 0;
     const clouds = [
         [350, -200],
         [230, -210],
@@ -44,7 +43,17 @@ const sketch = (p) => {
         p.line(rainDrop.x, rainDrop.y, rainDrop.x + 5, rainDrop.y - 15);
         rainDrop.y += 13;
         rainDrop.x -= 3;
-        return rainDrop.y < rainDrop.groundLevel;
+        const hitUmbrella = p.mouseY < UMBRELLA_APPEAR_Y &&
+            p.dist(rainDrop.x, rainDrop.y, p.mouseX - CANVAS_WIDTH / 2, p.mouseY - CANVAS_HEIGHT / 2) < UMBRELLA_SIZE / 2;
+        if (hitUmbrella || rainDrop.y > rainDrop.groundLevel) {
+            return false;
+        }
+        else
+            return true;
+    }
+    function getX(amplifier) {
+        const mouseXFromCenter = p.constrain(p.mouseX - CANVAS_WIDTH / 2, -CANVAS_WIDTH / 2, CANVAS_WIDTH / 2);
+        return mouseXFromCenter * amplifier;
     }
     p.draw = () => {
         p.background(100);
@@ -71,13 +80,24 @@ const sketch = (p) => {
             for (let i = 0; i < 10; i++) {
                 rainDropsList.push({
                     x: i * CANVAS_WIDTH / 9 + p.random(30, 80) - CANVAS_WIDTH / 2,
-                    y: -CANVAS_HEIGHT / 2 - p.random(-70, 70),
+                    y: -CANVAS_HEIGHT / 2 - p.random(10, 120),
                     groundLevel: CANVAS_HEIGHT / 2 - p.random(20, 50)
                 });
             }
         }
         p.stroke(250);
         rainDropsList = rainDropsList.filter(renderRainDrop);
+        p.push();
+        if (umbrellaAlpha > 0) {
+            p.tint(255, umbrellaAlpha);
+            p.image(umbrella, p.mouseX - CANVAS_WIDTH / 2, p.mouseY - CANVAS_HEIGHT / 2, UMBRELLA_SIZE, UMBRELLA_SIZE);
+        }
+        if (p.mouseY < UMBRELLA_APPEAR_Y)
+            umbrellaAlpha += 15;
+        else
+            umbrellaAlpha -= 15;
+        umbrellaAlpha = p.constrain(umbrellaAlpha, 0, 255);
+        p.pop();
     };
 };
 window.onload = () => {

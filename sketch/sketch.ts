@@ -31,15 +31,10 @@ const sketch = (p: p5) => {
     p.textFont("Cursive", 85);
   };
 
-  function getX(amplifier: number): number {
-    // mouse X from center (contrains to on screen only)
-    const mouseXFromCenter: number = p.constrain(
-      p.mouseX - CANVAS_WIDTH/2,
-      -CANVAS_WIDTH/2, 
-      CANVAS_WIDTH/2
-    );
-    return mouseXFromCenter * amplifier;
-  }
+  // umbrella vars
+  const UMBRELLA_APPEAR_Y: number = CANVAS_HEIGHT/2 + 100;
+  const UMBRELLA_SIZE: number = 120;
+  let umbrellaAlpha: number = 0;
 
   const clouds: [number, number][] = [
     [350, -200],
@@ -68,10 +63,32 @@ const sketch = (p: p5) => {
     rainDrop.y += 13;
     rainDrop.x -= 3;
 
-    // check if hit mouse
+    // umbrella is appearing && hit umbrella?
+    const hitUmbrella: boolean = p.mouseY < UMBRELLA_APPEAR_Y &&
+    p.dist(
+      rainDrop.x,
+      rainDrop.y,
+      p.mouseX - CANVAS_WIDTH/2,
+      p.mouseY - CANVAS_HEIGHT/2
+    ) < UMBRELLA_SIZE/2;
 
-    
-    return rainDrop.y < rainDrop.groundLevel;
+    // hit umbrella or ground
+    if (hitUmbrella || rainDrop.y > rainDrop.groundLevel){
+      // spawn water particles
+
+      return false;
+    }
+    else return true;
+  }
+
+  function getX(amplifier: number): number {
+    // mouse X from center (contrains to on screen only)
+    const mouseXFromCenter: number = p.constrain(
+      p.mouseX - CANVAS_WIDTH/2,
+      -CANVAS_WIDTH/2, 
+      CANVAS_WIDTH/2
+    );
+    return mouseXFromCenter * amplifier;
   }
 
   p.draw = () => {
@@ -116,7 +133,7 @@ const sketch = (p: p5) => {
       for (let i=0; i < 10; i++){
         rainDropsList.push({
           x: i * CANVAS_WIDTH/9 + p.random(30, 80) - CANVAS_WIDTH/2,
-          y: -CANVAS_HEIGHT/2 - p.random(-70, 70),
+          y: -CANVAS_HEIGHT/2 - p.random(10, 120),
           groundLevel: CANVAS_HEIGHT/2 - p.random(20, 50)
         });
       }
@@ -125,6 +142,23 @@ const sketch = (p: p5) => {
     // render rain drops (also filter out the ones that exploded)
     p.stroke(250);
     rainDropsList = rainDropsList.filter(renderRainDrop);
+
+    // umbrella
+    p.push();
+    if (umbrellaAlpha > 0){
+      p.tint(255, umbrellaAlpha);
+      p.image(umbrella, 
+        p.mouseX - CANVAS_WIDTH/2, p.mouseY - CANVAS_HEIGHT/2, 
+        UMBRELLA_SIZE, 
+        UMBRELLA_SIZE
+      );
+    }
+
+    // update alpha
+    if (p.mouseY < UMBRELLA_APPEAR_Y) umbrellaAlpha += 15;
+    else umbrellaAlpha -= 15;
+    umbrellaAlpha = p.constrain(umbrellaAlpha, 0, 255);
+    p.pop();
   };
 };
 
