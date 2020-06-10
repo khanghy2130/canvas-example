@@ -22,17 +22,34 @@ const sketch = (p) => {
         p.imageMode(p.CENTER);
         p.rectMode(p.CENTER);
         p.textAlign(p.CENTER, p.CENTER);
+        p.noStroke();
         p.textFont("Cursive", 85);
     };
     function getX(amplifier) {
         const mouseXFromCenter = p.constrain(p.mouseX - CANVAS_WIDTH / 2, -CANVAS_WIDTH / 2, CANVAS_WIDTH / 2);
         return mouseXFromCenter * amplifier;
     }
+    const clouds = [
+        [350, -200],
+        [230, -210],
+        [180, -180],
+        [0, -220],
+        [-150, -200],
+        [-250, -160]
+    ];
     p.draw = () => {
         p.background(100);
         p.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
         p.image(mountain, 0, -CANVAS_HEIGHT / 4, CANVAS_WIDTH, CANVAS_HEIGHT / 2);
         p.image(moon, 150, -CANVAS_HEIGHT / 2.5, 70, 70);
+        p.fill(250, 250, 250, 120);
+        clouds.forEach((cloudPos, index) => {
+            p.rect(cloudPos[0], cloudPos[1], 100, 30, 10);
+            if (cloudPos[0] < -CANVAS_WIDTH / 2 - 100)
+                clouds[index][0] = CANVAS_WIDTH / 2 + 100;
+            else
+                clouds[index][0]--;
+        });
         p.image(trees2, getX(0.04), -50, 650, 250);
         p.image(trees1, getX(0.09), -90, 700, 350);
         p.image(water, getX(0.3), 110, 800, 100);

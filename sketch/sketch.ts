@@ -27,7 +27,7 @@ const sketch = (p: p5) => {
     p.imageMode(p.CENTER);
     p.rectMode(p.CENTER);
     p.textAlign(p.CENTER, p.CENTER);
-
+    p.noStroke();
     p.textFont("Cursive", 85);
   };
 
@@ -41,6 +41,15 @@ const sketch = (p: p5) => {
     return mouseXFromCenter * amplifier;
   }
 
+  const clouds: [number, number][] = [
+    [350, -200],
+    [230, -210],
+    [180, -180],
+    [0, -220],
+    [-150, -200],
+    [-250, -160]
+  ];
+
   p.draw = () => {
     p.background(100);
     p.translate(CANVAS_WIDTH/2, CANVAS_HEIGHT/2);
@@ -50,6 +59,14 @@ const sketch = (p: p5) => {
     p.image(moon, 150, -CANVAS_HEIGHT/2.5, 70, 70);
 
     // clouds layer
+    p.fill(250, 250, 250, 120);
+    clouds.forEach((cloudPos: [number, number], index: number) => {
+      // render
+      p.rect(cloudPos[0], cloudPos[1], 100, 30, 10);
+      // update x position
+      if (cloudPos[0] < -CANVAS_WIDTH/2 -100) clouds[index][0] = CANVAS_WIDTH/2 + 100;
+      else clouds[index][0]--;
+    });
 
     // trees 2 layer
     p.image(trees2, getX(0.04), -50, 650, 250);
