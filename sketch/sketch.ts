@@ -27,7 +27,7 @@ const sketch = (p: p5) => {
     p.imageMode(p.CENTER);
     p.rectMode(p.CENTER);
     p.textAlign(p.CENTER, p.CENTER);
-    p.noStroke();
+    p.strokeWeight(1); // rain drop
     p.textFont("Cursive", 85);
   };
 
@@ -50,10 +50,36 @@ const sketch = (p: p5) => {
     [-250, -160]
   ];
 
+  interface RainDrop {
+    x: number,
+    y: number,
+    groundLevel: number
+  }
+
+  let rainDropsList: RainDrop[] = [];
+  const RAIN_WAVE_DELAY: number = 15;
+  let spawnRainWaveTimer: number = 0;
+
+  // renders a rain drop and return false if it hits something
+  function renderRainDrop(rainDrop: RainDrop): boolean {
+    // render
+    p.line(rainDrop.x, rainDrop.y, rainDrop.x + 5, rainDrop.y - 15);
+    // update position
+    rainDrop.y += 13;
+    rainDrop.x -= 3;
+
+    // check if hit mouse
+
+    
+    return rainDrop.y < rainDrop.groundLevel;
+  }
+
   p.draw = () => {
     p.background(100);
     p.translate(CANVAS_WIDTH/2, CANVAS_HEIGHT/2);
     
+    p.noStroke();
+
     // last layer
     p.image(mountain, 0, -CANVAS_HEIGHT/4, CANVAS_WIDTH, CANVAS_HEIGHT/2);
     p.image(moon, 150, -CANVAS_HEIGHT/2.5, 70, 70);
@@ -64,8 +90,8 @@ const sketch = (p: p5) => {
       // render
       p.rect(cloudPos[0], cloudPos[1], 100, 30, 10);
       // update x position
-      if (cloudPos[0] < -CANVAS_WIDTH/2 -100) clouds[index][0] = CANVAS_WIDTH/2 + 100;
-      else clouds[index][0]--;
+      if (cloudPos[0] < -CANVAS_WIDTH/2 -100) cloudPos[0] = CANVAS_WIDTH/2 + 100;
+      else cloudPos[0]--;
     });
 
     // trees 2 layer
@@ -83,7 +109,22 @@ const sketch = (p: p5) => {
 
     // first layer
     p.image(firstLayer, getX(0.65), 0, CANVAS_HEIGHT*2, CANVAS_HEIGHT);
-    
+
+    // spawn rain drops
+    if (++spawnRainWaveTimer >= RAIN_WAVE_DELAY) {
+      spawnRainWaveTimer = 0;
+      for (let i=0; i < 10; i++){
+        rainDropsList.push({
+          x: i * CANVAS_WIDTH/9 + p.random(30, 80) - CANVAS_WIDTH/2,
+          y: -CANVAS_HEIGHT/2 - p.random(-70, 70),
+          groundLevel: CANVAS_HEIGHT/2 - p.random(20, 50)
+        });
+      }
+    }
+
+    // render rain drops (also filter out the ones that exploded)
+    p.stroke(250);
+    rainDropsList = rainDropsList.filter(renderRainDrop);
   };
 };
 

@@ -22,7 +22,7 @@ const sketch = (p) => {
         p.imageMode(p.CENTER);
         p.rectMode(p.CENTER);
         p.textAlign(p.CENTER, p.CENTER);
-        p.noStroke();
+        p.strokeWeight(1);
         p.textFont("Cursive", 85);
     };
     function getX(amplifier) {
@@ -37,18 +37,28 @@ const sketch = (p) => {
         [-150, -200],
         [-250, -160]
     ];
+    let rainDropsList = [];
+    const RAIN_WAVE_DELAY = 15;
+    let spawnRainWaveTimer = 0;
+    function renderRainDrop(rainDrop) {
+        p.line(rainDrop.x, rainDrop.y, rainDrop.x + 5, rainDrop.y - 15);
+        rainDrop.y += 13;
+        rainDrop.x -= 3;
+        return rainDrop.y < rainDrop.groundLevel;
+    }
     p.draw = () => {
         p.background(100);
         p.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+        p.noStroke();
         p.image(mountain, 0, -CANVAS_HEIGHT / 4, CANVAS_WIDTH, CANVAS_HEIGHT / 2);
         p.image(moon, 150, -CANVAS_HEIGHT / 2.5, 70, 70);
         p.fill(250, 250, 250, 120);
         clouds.forEach((cloudPos, index) => {
             p.rect(cloudPos[0], cloudPos[1], 100, 30, 10);
             if (cloudPos[0] < -CANVAS_WIDTH / 2 - 100)
-                clouds[index][0] = CANVAS_WIDTH / 2 + 100;
+                cloudPos[0] = CANVAS_WIDTH / 2 + 100;
             else
-                clouds[index][0]--;
+                cloudPos[0]--;
         });
         p.image(trees2, getX(0.04), -50, 650, 250);
         p.image(trees1, getX(0.09), -90, 700, 350);
@@ -56,6 +66,18 @@ const sketch = (p) => {
         p.fill(250);
         p.text("CANVAS", getX(0.2) - 100, 25);
         p.image(firstLayer, getX(0.65), 0, CANVAS_HEIGHT * 2, CANVAS_HEIGHT);
+        if (++spawnRainWaveTimer >= RAIN_WAVE_DELAY) {
+            spawnRainWaveTimer = 0;
+            for (let i = 0; i < 10; i++) {
+                rainDropsList.push({
+                    x: i * CANVAS_WIDTH / 9 + p.random(30, 80) - CANVAS_WIDTH / 2,
+                    y: -CANVAS_HEIGHT / 2 - p.random(-70, 70),
+                    groundLevel: CANVAS_HEIGHT / 2 - p.random(20, 50)
+                });
+            }
+        }
+        p.stroke(250);
+        rainDropsList = rainDropsList.filter(renderRainDrop);
     };
 };
 window.onload = () => {
